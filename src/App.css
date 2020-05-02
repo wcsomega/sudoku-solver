@@ -53,10 +53,6 @@ div{
   border-bottom-right-radius: 10px;
 }
 
-.border-gray {
-  border: 1px solid gray;
-}
-
 .border-gray-l {
   border-left: 1px solid gray;
 }
@@ -84,12 +80,4 @@ div{
 
 .cell:hover {
   background-color: var(--blue-200);
-}
-
-.text-color-black {
-  color: black;
-}
-
-.text-color-blue {
-  color: var(--blue-200);
 }
