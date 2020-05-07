@@ -1,13 +1,14 @@
 import React from 'react';
 import { List } from 'immutable';
+import { solve } from './SudokuSolver.js';
 import './App.css';
 
 export default class App extends React.Component {
+  
   constructor(props) {
     super(props);
-    let nums = List(Array(81).fill(""));
     this.state = {
-      numbers: nums,
+      numbers: List(Array(81).fill(0)),
     }
   }
 
@@ -24,8 +25,17 @@ export default class App extends React.Component {
   }
 
   handleClick = (x, y) => {
-    const num = Math.floor(Math.random() * 9 + 1);
+    let num = this.getAt(x, y);
+    num += 1;
+    num %= 10;
     this.setAt(x, y, num);
+  }
+
+  solvePuzzle = () => {
+    let nums = solve(this.state.numbers);
+    this.setState({
+      numbers: nums,
+    })
   }
 
   render() {
@@ -60,17 +70,23 @@ export default class App extends React.Component {
           classes.push("rounded-br");
         }
         let key= y*9+x;
+        let num = this.getAt(x, y);
         elements.push(
           <div key={key.toString()} className={classes.join(" ")}
             onClick={() => this.handleClick(x, y)}>
-            <span>{this.getAt(x, y)}</span>
+            <span>{num === 0 ? "" : num}</span>
           </div>
         );
       }
     }
     return (
-      <div className="grid width-540 height-540 mx-auto mt-40 border-black rounded">
-        {elements}
+      <div>
+        <div className="grid width-540 height-540 mx-auto mt-40 border-black rounded">
+          {elements}
+        </div>
+        <button onClick={this.solvePuzzle}>
+          SOLVE
+        </button>
       </div>
     );
   }
