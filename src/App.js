@@ -80,11 +80,12 @@ export default class App extends React.Component {
       }
     }
     return (
-      <div>
+      <div className="text-center">
         <div className="grid width-540 height-540 mx-auto mt-40 border-black rounded">
           {elements}
         </div>
-        <button onClick={this.solvePuzzle}>
+        <button className="rounded border-0 text-white color-blue text-xl pa-10 mt-20"
+          onClick={this.solvePuzzle}>
           SOLVE
         </button>
       </div>

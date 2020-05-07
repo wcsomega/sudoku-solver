@@ -29,6 +29,10 @@ div{
   margin-top: 40px;
 }
 
+.mt-20 {
+  margin-top: 20px;
+}
+
 .border-black{
   border: 2px solid black;
 }
@@ -81,4 +85,28 @@ div{
 
 .cell:hover {
   background-color: var(--blue-200);
+}
+
+.border-0 {
+  border: 0px solid transparent;
+}
+
+.text-white {
+  color: white;
+}
+
+.color-blue {
+  background-color: blue;
+}
+
+.text-xl {
+  font-size: x-large;
+}
+
+.pa-10 {
+  padding: 10px;
+}
+
+.text-center {
+  text-align: center;
 }
