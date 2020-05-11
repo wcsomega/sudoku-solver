@@ -1,7 +1,29 @@
+/** @jsx jsx */
+
 import React from 'react';
 import { List } from 'immutable';
 import { solve } from './SudokuSolver.js';
-import './App.css';
+import { css, jsx } from "@emotion/core";
+
+const Square = props => (
+  <div css={{
+    display: 'grid',
+    '&:hover': {
+      backgroundColor: '#BEE3F8',
+    }
+  }}
+  {...props}
+  >
+    <span css={{
+      color: props.fixed ? 'blue' : 'black',
+      fontSize: 'xx-large',
+      userSelect: 'none',
+      margin: 'auto',
+    }}>
+      {props.children}
+    </span>
+  </div>
+)
 
 export default class App extends React.Component {
   
@@ -42,49 +64,73 @@ export default class App extends React.Component {
     let elements = [];
     for(let y = 0; y < 9; y++) {
       for(let x = 0; x < 9; x++){
-        let classes = ["cell"]
+        let classes = []
         if (y !== 0) {
           if (y % 3 === 0){
-            classes.push("border-black-t");
+            classes.push(css`border-top: 2px solid black;`);
           } else {
-            classes.push("border-gray-t");
+            classes.push(css`border-top: 1px solid grey;`);
           }
         }
         if (x !== 0) {
           if (x % 3 === 0) {
-            classes.push("border-black-l");
+            classes.push(css`border-left: 2px solid black`);
           } else {
-            classes.push("border-gray-l");
+            classes.push(css`border-left: 1px solid grey`);
           }
         }
         if (x === 0 && y === 0) {
-          classes.push("rounded-tl");
+          // classes.push("rounded-tl");
         }
         if (x === 8 && y === 0) {
-          classes.push("rounded-tr");
+          // classes.push("rounded-tr");
         }
         if (x === 0 && y === 8) {
-          classes.push("rounded-bl");
+          // classes.push("rounded-bl");
         }
         if (x === 8 && y === 8) {
-          classes.push("rounded-br");
+          // classes.push("rounded-br");
         }
         let key= y*9+x;
         let num = this.getAt(x, y);
         elements.push(
-          <div key={key.toString()} className={classes.join(" ")}
-            onClick={() => this.handleClick(x, y)}>
-            <span>{num === 0 ? "" : num}</span>
-          </div>
+          <Square key={key.toString()}
+            onClick={() => this.handleClick(x, y)}
+            css={classes}
+          >
+            {num === 0 ? "" : num}
+          </Square>
         );
       }
     }
     return (
-      <div className="text-center">
-        <div className="grid width-540 height-540 mx-auto mt-40 border-black rounded">
+      <div css={css`
+        text-align: center;
+      `}>
+        <div css={css`
+          display: grid;
+          grid-template-columns: repeat(9, 1fr);
+          grid-template-rows: repeat(9, 1fr);
+          width: 540px;
+          height: 540px;
+          margin-right: auto;
+          margin-left: auto;
+          margin-top: 40px;
+          border: 2px solid black;
+          border-radius: 10px;
+          overflow: hidden
+        `}>
           {elements}
         </div>
-        <button className="rounded border-0 text-white color-blue text-xl pa-10 mt-20"
+        <button
+          css={css`
+            border-radius: 10px;
+            color: white;
+            background-color: blue;
+            font-size: x-large;
+            border: 0px solid transparent;
+            padding: 10px;
+            margin-top: 20px`}
           onClick={this.solvePuzzle}>
           SOLVE
         </button>
