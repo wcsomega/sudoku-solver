@@ -4,13 +4,12 @@ import React from 'react';
 import { List } from 'immutable';
 import { solve } from './SudokuSolver.js';
 import { css, jsx } from "@emotion/core";
+import './global.css';
 
 const Square = props => (
   <div css={{
     display: 'grid',
-    '&:hover': {
-      backgroundColor: '#BEE3F8',
-    }
+    backgroundColor: props.selected ? 'lightskyblue' : 'transparent',
   }}
   {...props}
   >
@@ -23,6 +22,40 @@ const Square = props => (
       {props.children}
     </span>
   </div>
+);
+
+const Button = props => (
+  <button css={css`
+    border-radius: 5px;
+    color: white;
+    background-color: dodgerblue;
+    font-size: x-large;
+    border: 0px solid transparent;
+    padding: 10px 30px;
+    margin: 20px 10px;
+    text-transform: uppercase;
+
+    &:hover {
+      background-color: deepskyblue;
+    }
+  `}
+  {...props}
+  >
+    {props.children}
+  </button>
+);
+
+const Grid = props => (
+  <div css={css`
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(9, 1fr);
+    overflow: hidden
+  `}
+  {...props}
+  >
+    {props.children}
+  </div>
 )
 
 export default class App extends React.Component {
@@ -31,34 +64,49 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       numbers: List(Array(81).fill(0)),
+      selection: {
+        isSelected: false,
+        x: 0,
+        y: 0,
+      }
     }
   }
 
   getAt = (x, y) => {
     const i = y * 9 + x;
     return this.state.numbers.get(i);
-  }
+  };
 
   setAt = (x, y, value) => {
     const i = y * 9 + x;
     this.setState({
       numbers: this.state.numbers.set(i, value),
     })
-  }
+  };
 
   handleClick = (x, y) => {
-    let num = this.getAt(x, y);
-    num += 1;
-    num %= 10;
-    this.setAt(x, y, num);
-  }
+    this.setState({
+      selection: {
+        isSelected: true,
+        x: x,
+        y: y,
+      }
+    });
+  };
+
+  resetPuzzle = () => {
+    console.log('reset');
+    this.setState({
+      numbers: List(Array(81).fill(0)),
+    });
+  };
 
   solvePuzzle = () => {
     let nums = solve(this.state.numbers);
     this.setState({
       numbers: nums,
     })
-  }
+  };
 
   render() {
     let elements = [];
@@ -93,10 +141,14 @@ export default class App extends React.Component {
         }
         let key= y*9+x;
         let num = this.getAt(x, y);
+        let isSelected = this.state.selection.isSelected &&
+          this.state.selection.x === x &&
+          this.state.selection.y === y;
         elements.push(
           <Square key={key.toString()}
             onClick={() => this.handleClick(x, y)}
             css={classes}
+            selected={isSelected}
           >
             {num === 0 ? "" : num}
           </Square>
@@ -107,33 +159,23 @@ export default class App extends React.Component {
       <div css={css`
         text-align: center;
       `}>
-        <div css={css`
-          display: grid;
-          grid-template-columns: repeat(9, 1fr);
-          grid-template-rows: repeat(9, 1fr);
+        <Grid css={css`
           width: 540px;
           height: 540px;
           margin-right: auto;
           margin-left: auto;
           margin-top: 40px;
           border: 2px solid black;
-          border-radius: 10px;
-          overflow: hidden
+          border-radius: 5px;
         `}>
           {elements}
-        </div>
-        <button
-          css={css`
-            border-radius: 10px;
-            color: white;
-            background-color: blue;
-            font-size: x-large;
-            border: 0px solid transparent;
-            padding: 10px;
-            margin-top: 20px`}
-          onClick={this.solvePuzzle}>
-          SOLVE
-        </button>
+        </Grid>
+        <Button onClick={this.solvePuzzle}>
+          Solve
+        </Button>
+        <Button onClick={this.resetPuzzle}>
+          Reset
+        </Button>
       </div>
     );
   }
