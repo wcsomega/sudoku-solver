@@ -1,62 +1,11 @@
 /** @jsx jsx */
 
+import './global.css';
 import React from 'react';
-import { List } from 'immutable';
+import { List, Range } from 'immutable';
 import { solve } from './SudokuSolver.js';
 import { css, jsx } from "@emotion/core";
-import './global.css';
-
-const Square = props => (
-  <div css={{
-    display: 'grid',
-    backgroundColor: props.selected ? 'lightskyblue' : 'transparent',
-  }}
-  {...props}
-  >
-    <span css={{
-      color: props.fixed ? 'blue' : 'black',
-      fontSize: 'xx-large',
-      userSelect: 'none',
-      margin: 'auto',
-    }}>
-      {props.children}
-    </span>
-  </div>
-);
-
-const Button = props => (
-  <button css={css`
-    border-radius: 5px;
-    color: white;
-    background-color: dodgerblue;
-    font-size: x-large;
-    border: 0px solid transparent;
-    padding: 10px 30px;
-    margin: 20px 10px;
-    text-transform: uppercase;
-
-    &:hover {
-      background-color: deepskyblue;
-    }
-  `}
-  {...props}
-  >
-    {props.children}
-  </button>
-);
-
-const Grid = props => (
-  <div css={css`
-    display: grid;
-    grid-template-columns: repeat(9, 1fr);
-    grid-template-rows: repeat(9, 1fr);
-    overflow: hidden
-  `}
-  {...props}
-  >
-    {props.children}
-  </div>
-)
+import { Button, Square, Grid, NumButton } from './components.js';
 
 export default class App extends React.Component {
   
@@ -95,7 +44,6 @@ export default class App extends React.Component {
   };
 
   resetPuzzle = () => {
-    console.log('reset');
     this.setState({
       numbers: List(Array(81).fill(0)),
     });
@@ -107,6 +55,12 @@ export default class App extends React.Component {
       numbers: nums,
     })
   };
+
+  onNumButton = (val) => {
+    if (this.state.selection.isSelected) {
+      this.setAt(this.state.selection.x, this.state.selection.y, val);
+    }
+  }
 
   render() {
     let elements = [];
@@ -127,18 +81,6 @@ export default class App extends React.Component {
             classes.push(css`border-left: 1px solid grey`);
           }
         }
-        if (x === 0 && y === 0) {
-          // classes.push("rounded-tl");
-        }
-        if (x === 8 && y === 0) {
-          // classes.push("rounded-tr");
-        }
-        if (x === 0 && y === 8) {
-          // classes.push("rounded-bl");
-        }
-        if (x === 8 && y === 8) {
-          // classes.push("rounded-br");
-        }
         let key= y*9+x;
         let num = this.getAt(x, y);
         let isSelected = this.state.selection.isSelected &&
@@ -156,25 +98,33 @@ export default class App extends React.Component {
       }
     }
     return (
-      <div css={css`
-        text-align: center;
-      `}>
-        <Grid css={css`
-          width: 540px;
-          height: 540px;
-          margin-right: auto;
-          margin-left: auto;
-          margin-top: 40px;
-          border: 2px solid black;
-          border-radius: 5px;
-        `}>
+      <div css={{
+        textAlign: 'center',
+      }}>
+        <Grid css={{
+          width: '540px',
+          height: '540px',
+          marginRight: 'auto',
+          marginLeft: 'auto',
+          marginTop: '40px',
+          marginBottom: '20px',
+          border: '2px solid black',
+          borderRadius: '5px',
+        }}
+        rows={9} columns={9}>
           {elements}
         </Grid>
+        <div>
+          {Range(1, 10).map(num => <NumButton number={num} onClick={() => this.onNumButton(num)}/>)} 
+        </div>
         <Button onClick={this.solvePuzzle}>
-          Solve
+          Solve Puzzle
         </Button>
         <Button onClick={this.resetPuzzle}>
-          Reset
+          Reset Puzzle
+        </Button>
+        <Button onClick={() => this.onNumButton(0)}>
+          Erase Cell
         </Button>
       </div>
     );
