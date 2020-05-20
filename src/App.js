@@ -71,41 +71,6 @@ export default class App extends React.Component {
   }
 
   render() {
-    let elements = [];
-    for(let y = 0; y < 9; y++) {
-      for(let x = 0; x < 9; x++){
-        let classes = []
-        if (y !== 0) {
-          if (y % 3 === 0){
-            classes.push(css`border-top: 2px solid black;`);
-          } else {
-            classes.push(css`border-top: 1px solid grey;`);
-          }
-        }
-        if (x !== 0) {
-          if (x % 3 === 0) {
-            classes.push(css`border-left: 2px solid black`);
-          } else {
-            classes.push(css`border-left: 1px solid grey`);
-          }
-        }
-        let key= y*9+x;
-        let num = this.getAt(x, y);
-        let isSelected = this.state.selection.isSelected &&
-          this.state.selection.x === x &&
-          this.state.selection.y === y;
-        elements.push(
-          <Square key={key.toString()}
-            onClick={() => this.handleClick(x, y)}
-            css={classes}
-            selected={isSelected}
-            fixed={this.state.fixed.get(key)}
-          >
-            {num === 0 ? "" : num}
-          </Square>
-        );
-      }
-    }
     return (
       <div css={{
         textAlign: 'center',
@@ -121,7 +86,22 @@ export default class App extends React.Component {
           borderRadius: '5px',
         }}
         rows={9} columns={9}>
-          {elements}
+          {this.state.numbers.map((number, index) => {
+            const x = index % 9;
+            const y = Math.trunc(index / 9);
+            return (
+              <Square
+                onClick={() => this.handleClick(x, y)}
+                selected={this.state.selection.isSelected && this.state.selection.x === x && this.state.selection.y === y}
+                fixed={this.state.fixed.get(index)}
+                css={{
+                  borderTop: y === 0 ? '0px solid transparent' : y % 3 === 0 ? '2px solid black' : '1px solid grey',
+                  borderLeft: x === 0 ? '0px solid transparent' : x % 3 === 0 ? '2px solid black' : '1px solid grey'
+                }}
+              >
+                { number === 0 ? "" : number }
+              </Square>
+          )})}
         </Grid>
         <div>
           {Range(1, 10).map(num => <NumButton number={num} onClick={() => this.onNumButton(num)}/>)} 
