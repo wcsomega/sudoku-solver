@@ -13,6 +13,7 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       numbers: List(Array(81).fill(0)),
+      fixed: List(Array(81).fill(false)),
       selection: {
         isSelected: false,
         x: 0,
@@ -30,7 +31,8 @@ export default class App extends React.Component {
     const i = y * 9 + x;
     this.setState({
       numbers: this.state.numbers.set(i, value),
-    })
+      fixed: this.state.fixed.set(i, value !== 0),
+    });
   };
 
   handleClick = (x, y) => {
@@ -46,6 +48,12 @@ export default class App extends React.Component {
   resetPuzzle = () => {
     this.setState({
       numbers: List(Array(81).fill(0)),
+      fixed: List(Array(81).fill(false)),
+      selection: {
+        isSelected: false,
+        x: 0,
+        y: 0
+      }
     });
   };
 
@@ -91,6 +99,7 @@ export default class App extends React.Component {
             onClick={() => this.handleClick(x, y)}
             css={classes}
             selected={isSelected}
+            fixed={this.state.fixed.get(key)}
           >
             {num === 0 ? "" : num}
           </Square>

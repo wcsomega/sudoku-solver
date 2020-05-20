@@ -5,11 +5,14 @@ export const Square = ({selected, fixed, children, ...rest}) => (
   <div css={{
     display: 'grid',
     backgroundColor: selected ? 'lightskyblue' : 'transparent',
+    '&:hover': {
+      backgroundColor: selected ? 'lightskyblue' : 'aliceblue',
+    },
   }}
   {...rest}
   >
     <span css={{
-      color: fixed ? 'blue' : 'black',
+      color: fixed ? 'black' : 'darkgray',
       fontSize: 'xx-large',
       userSelect: 'none',
       margin: 'auto',
