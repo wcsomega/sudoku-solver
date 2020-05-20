@@ -4,8 +4,8 @@ import './global.css';
 import React from 'react';
 import { List, Range } from 'immutable';
 import { solve } from './SudokuSolver.js';
-import { css, jsx } from "@emotion/core";
-import { Button, Square, Grid, NumButton } from './components.js';
+import { jsx } from "@emotion/core";
+import { Button, SudokuGrid, NumButton } from './components.js';
 
 export default class App extends React.Component {
   
@@ -14,34 +14,14 @@ export default class App extends React.Component {
     this.state = {
       numbers: List(Array(81).fill(0)),
       fixed: List(Array(81).fill(false)),
-      selection: {
-        isSelected: false,
-        x: 0,
-        y: 0,
-      }
+      selection: -1
     }
   }
 
-  getAt = (x, y) => {
-    const i = y * 9 + x;
-    return this.state.numbers.get(i);
-  };
-
-  setAt = (x, y, value) => {
-    const i = y * 9 + x;
+  handleClick = (index) => {
+    console.log(index);
     this.setState({
-      numbers: this.state.numbers.set(i, value),
-      fixed: this.state.fixed.set(i, value !== 0),
-    });
-  };
-
-  handleClick = (x, y) => {
-    this.setState({
-      selection: {
-        isSelected: true,
-        x: x,
-        y: y,
-      }
+      selection: index
     });
   };
 
@@ -65,8 +45,12 @@ export default class App extends React.Component {
   };
 
   onNumButton = (val) => {
-    if (this.state.selection.isSelected) {
-      this.setAt(this.state.selection.x, this.state.selection.y, val);
+    // console.log(`${index} ${val}`)
+    if (this.state.selection !== -1) {
+      this.setState({
+        numbers: this.state.numbers.set(this.state.selection, val),
+        fixed: this.state.fixed.set(this.state.selection, val !== 0)
+      })
     }
   }
 
@@ -75,36 +59,22 @@ export default class App extends React.Component {
       <div css={{
         textAlign: 'center',
       }}>
-        <Grid css={{
-          width: '540px',
-          height: '540px',
-          marginRight: 'auto',
-          marginLeft: 'auto',
-          marginTop: '40px',
-          marginBottom: '20px',
-          border: '2px solid black',
-          borderRadius: '5px',
-        }}
-        rows={9} columns={9}>
-          {this.state.numbers.map((number, index) => {
-            const x = index % 9;
-            const y = Math.trunc(index / 9);
-            return (
-              <Square
-                onClick={() => this.handleClick(x, y)}
-                selected={this.state.selection.isSelected && this.state.selection.x === x && this.state.selection.y === y}
-                fixed={this.state.fixed.get(index)}
-                css={{
-                  borderTop: y === 0 ? '0px solid transparent' : y % 3 === 0 ? '2px solid black' : '1px solid grey',
-                  borderLeft: x === 0 ? '0px solid transparent' : x % 3 === 0 ? '2px solid black' : '1px solid grey'
-                }}
-              >
-                { number === 0 ? "" : number }
-              </Square>
-          )})}
-        </Grid>
+        <SudokuGrid 
+          css={{
+            width: '540px',
+            height: '540px',
+            marginRight: 'auto',
+            marginLeft: 'auto',
+            marginTop: '40px',
+            marginBottom: '20px',
+          }}
+          numbers={this.state.numbers}
+          fixed={this.state.fixed}
+          onSelectCell={this.handleClick}
+          selection={this.state.selection}
+        />
         <div>
-          {Range(1, 10).map(num => <NumButton number={num} onClick={() => this.onNumButton(num)}/>)} 
+          {Range(1, 10).map(num => <NumButton number={num} key={num} onClick={() => this.onNumButton(num)}/>)} 
         </div>
         <Button onClick={this.solvePuzzle}>
           Solve Puzzle

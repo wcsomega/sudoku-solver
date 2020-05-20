@@ -56,6 +56,34 @@ export const Grid = ({rows, columns, children, ...rest}) => (
   </div>
 );
 
+export const SudokuGrid =({numbers, fixed, selection, onSelectCell, ...rest}) => (
+  <Grid rows={9} columns={9}
+    css={{
+      border: '2px solid black',
+      borderRadius: '5px'
+    }}
+    {...rest}
+  >
+    {numbers.map((number, index) => {
+      const x = index % 9;
+      const y = Math.trunc(index / 9);
+      return (
+        <Square
+          onClick={() => onSelectCell(index)}
+          css={{
+            borderTop: y === 0 ? '0px solid transparent' : y % 3 === 0 ? '2px solid black' : '1px solid grey',
+            borderLeft: x === 0 ? '0px solid transparent' : x % 3 === 0 ? '2px solid black' : '1px solid grey'
+          }}
+          selected={selection === index}
+          fixed={fixed.get(index)}
+          key={index}
+        >
+          { number === 0 ? '' : number }
+        </Square>
+    )})}
+  </Grid>
+)
+
 export const NumButton = ({number, ...rest}) => (
   <button
     css={{
