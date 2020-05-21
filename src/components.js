@@ -1,5 +1,6 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core";
+import { useEffect, useRef, forwardRef } from 'react';
 
 export const Square = ({selected, fixed, children, ...rest}) => (
   <div css={{
@@ -43,46 +44,64 @@ export const Button = ({children, ...rest}) => (
   </button>
 );
 
-export const Grid = ({rows, columns, children, ...rest}) => (
+export const Grid = forwardRef(({rows, columns, children, ...rest}, ref) => (
   <div css={{
     display: 'grid',
     gridTemplateColumns: `repeat(${columns}, 1fr)`,
     gridTemplateRows: `repeat(${rows}, 1fr)`,
     overflow: 'hidden',
   }}
+  ref={ref}
   {...rest}
   >
     {children}
   </div>
-);
+));
 
-export const SudokuGrid =({numbers, fixed, selection, onSelectCell, ...rest}) => (
-  <Grid rows={9} columns={9}
-    css={{
-      border: '2px solid black',
-      borderRadius: '5px'
-    }}
-    {...rest}
-  >
-    {numbers.map((number, index) => {
-      const x = index % 9;
-      const y = Math.trunc(index / 9);
-      return (
-        <Square
-          onClick={() => onSelectCell(index)}
-          css={{
-            borderTop: y === 0 ? '0px solid transparent' : y % 3 === 0 ? '2px solid black' : '1px solid grey',
-            borderLeft: x === 0 ? '0px solid transparent' : x % 3 === 0 ? '2px solid black' : '1px solid grey'
-          }}
-          selected={selection === index}
-          fixed={fixed.get(index)}
-          key={index}
-        >
-          { number === 0 ? '' : number }
-        </Square>
-    )})}
-  </Grid>
-)
+export const SudokuGrid =({numbers, fixed, selection, onSelectCell, onClickOutside, ...rest}) => {
+  const r = useRef(null);
+
+  useEffect(() => {
+    const handleOutside = event => {
+      if (r.current && !r.current.contains(event.target)){
+        onClickOutside(event);
+      }
+    }
+    
+    document.addEventListener('click', handleOutside);
+    return () => {
+      document.removeEventListener('click', handleOutside);
+    };
+  });
+
+  return (
+    <Grid rows={9} columns={9}
+      css={{
+        border: '2px solid black',
+        borderRadius: '5px'
+      }}
+      ref={r}
+      {...rest}
+    >
+      {numbers.map((number, index) => {
+        const x = index % 9;
+        const y = Math.trunc(index / 9);
+        return (
+          <Square
+            onClick={() => onSelectCell(index)}
+            css={{
+              borderTop: y === 0 ? '0px solid transparent' : y % 3 === 0 ? '2px solid black' : '1px solid grey',
+              borderLeft: x === 0 ? '0px solid transparent' : x % 3 === 0 ? '2px solid black' : '1px solid grey'
+            }}
+            selected={selection === index}
+            fixed={fixed.get(index)}
+            key={index}
+          >
+            { number === 0 ? '' : number }
+          </Square>
+      )})}
+    </Grid>
+)};
 
 export const NumButton = ({number, ...rest}) => (
   <button

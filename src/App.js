@@ -18,8 +18,13 @@ export default class App extends React.Component {
     }
   }
 
+  deselect = () => {
+    this.setState({
+      selection: -1
+    });
+  };
+
   handleClick = (index) => {
-    console.log(index);
     this.setState({
       selection: index
     });
@@ -29,11 +34,7 @@ export default class App extends React.Component {
     this.setState({
       numbers: List(Array(81).fill(0)),
       fixed: List(Array(81).fill(false)),
-      selection: {
-        isSelected: false,
-        x: 0,
-        y: 0
-      }
+      selection: -1
     });
   };
 
@@ -45,7 +46,6 @@ export default class App extends React.Component {
   };
 
   onNumButton = (val) => {
-    // console.log(`${index} ${val}`)
     if (this.state.selection !== -1) {
       this.setState({
         numbers: this.state.numbers.set(this.state.selection, val),
@@ -72,6 +72,7 @@ export default class App extends React.Component {
           fixed={this.state.fixed}
           onSelectCell={this.handleClick}
           selection={this.state.selection}
+          onClickOutside={this.deselect}
         />
         <div>
           {Range(1, 10).map(num => <NumButton number={num} key={num} onClick={() => this.onNumButton(num)}/>)} 
