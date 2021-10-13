@@ -1,10 +1,7 @@
-/** @jsx jsx */
-
 import './global.css';
 import React from 'react';
 import { List, Range } from 'immutable';
 import { solve } from './SudokuSolver.js';
-import { jsx } from "@emotion/core";
 import { Button, SudokuGrid, NumButton } from './components.js';
 
 export default class App extends React.Component {

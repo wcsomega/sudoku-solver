@@ -1,5 +1,3 @@
-/** @jsx jsx */
-import { jsx } from "@emotion/core";
 import { useEffect, useRef, forwardRef } from 'react';
 
 export const Square = ({selected, fixed, children, ...rest}) => (
