@@ -1,5 +1,4 @@
-/**@jsxRuntime classic */
-/**@jsx jsx */
+/**@jsxImportSource @emotion/react */
 
 import './global.css';
 import { jsx } from '@emotion/react';

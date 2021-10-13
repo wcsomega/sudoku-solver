@@ -1,6 +1,5 @@
-/**@jsxRuntime classic */
-/**@jsx jsx */
-import { jsx, css } from '@emotion/react'
+/**@jsxImportSource @emotion/react */
+
 import { useEffect, useRef, forwardRef } from 'react';
 
 export const Square = ({selected, fixed, children, ...rest}) => (
