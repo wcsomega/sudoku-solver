@@ -5,7 +5,8 @@ import { jsx } from '@emotion/react';
 import React from 'react';
 import { List, Range } from 'immutable';
 import { solve } from './SudokuSolver.js';
-import { Button, SudokuGrid, NumButton } from './components.js';
+import { Button, NumButton } from './components.js';
+import { SudokuGrid } from './components/SudokuGrid';
 
 export default class App extends React.Component {
   
