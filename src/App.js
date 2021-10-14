@@ -1,7 +1,6 @@
 /**@jsxImportSource @emotion/react */
 
 import './global.css';
-import { jsx } from '@emotion/react';
 import React from 'react';
 import { List, Range } from 'immutable';
 import { solve } from './SudokuSolver.js';
