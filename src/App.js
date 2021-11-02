@@ -68,11 +68,11 @@ export default class App extends React.Component {
             marginTop: '40px',
             marginBottom: '20px',
           }}
-          numbers={this.state.numbers}
-          fixed={this.state.fixed}
-          onSelectCell={this.handleClick}
-          selection={this.state.selection}
-          onClickOutside={this.deselect}
+          // numbers={this.state.numbers}
+          // fixed={this.state.fixed}
+          // onSelectCell={this.handleClick}
+          // selection={this.state.selection}
+          // onClickOutside={this.deselect}
         />
         <div>
           {Range(1, 10).map(num => <NumButton number={num} key={num} onClick={() => this.onNumButton(num)}/>)} 
