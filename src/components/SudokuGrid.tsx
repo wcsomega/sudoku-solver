@@ -1,6 +1,8 @@
 /**@jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
+import { useEffect, useState, useRef } from 'react';
+import useOnClickOutside from "../hooks/useOnClickOutside";
 
 const gridBg = 'rgb(48, 48, 48)'
 const selectedCellBorderColor = '#006600'
@@ -32,7 +34,7 @@ const nums = [
   9, 1, 2, 3, 4, 5, 6, 7, 8,
 ];
 
-let selection = 0;
+// let selection = 0;
 
 type Corner = 'TL' | 'TR' | 'BL' | 'BR' | 'None';
 
@@ -40,6 +42,7 @@ type GridCellProps = {
   selected: boolean,
   index: number,
   corner: Corner,
+  onClick?: () => void,
   children?: React.ReactNode,
 }
 
@@ -80,7 +83,9 @@ const getCornerStyle = (corner: Corner) => {
   if (corner === 'BR') return BRCorner;
 }
 
-const GridCell = (props: GridCellProps) => <div css={getGridCellStyle(props.index)}>
+const GridCell = (props: GridCellProps) => <div 
+    onClick={props.onClick}
+    css={getGridCellStyle(props.index)}>
   <div css={[
     GridCellSelectionStyle,
     props.selected && SelectedStyle,
@@ -123,10 +128,14 @@ const getGridCellStyle = (index: number) => {
 }
 
 export const SudokuGrid = (props: any) => {
+  let refEl = useRef(null);
+  let [selection, setSelection] = useState(0);
+  let [isFocused, setIsFocused] = useState(false);
 
-  return <div css={SudokuGridStyle}>
+  useOnClickOutside(refEl, () => setIsFocused(false));
+
+  return <div css={SudokuGridStyle} ref={refEl}>
     {
-      /* {nums.map(num => <GridCell selected={false}>{num}</GridCell>)} */
       nums.map((num, index) => {
         let corner: Corner = 'None'
         if (index === 0) corner = 'TL';
@@ -135,9 +144,13 @@ export const SudokuGrid = (props: any) => {
         if (index === 80) corner = 'BR';
         return <GridCell 
           key={index}
-          selected={ index === selection }
+          selected={ isFocused && (index === selection) }
           corner={ corner }
           index={index}
+          onClick={() => {
+            setSelection(index);
+            setIsFocused(true);
+          }}
         >{ num }</GridCell>
       })
     }
