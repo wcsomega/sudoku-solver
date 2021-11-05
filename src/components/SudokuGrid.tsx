@@ -1,7 +1,7 @@
 /**@jsxImportSource @emotion/react */
 
 import { css } from '@emotion/react';
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef, KeyboardEvent } from 'react';
 import useOnClickOutside from "../hooks/useOnClickOutside";
 
 const gridBg = 'rgb(48, 48, 48)'
@@ -83,9 +83,9 @@ const getCornerStyle = (corner: Corner) => {
   if (corner === 'BR') return BRCorner;
 }
 
-const GridCell = (props: GridCellProps) => <div 
-    onClick={props.onClick}
-    css={getGridCellStyle(props.index)}>
+const GridCell = (props: GridCellProps) => <div
+  onClick={props.onClick}
+  css={getGridCellStyle(props.index)}>
   <div css={[
     GridCellSelectionStyle,
     props.selected && SelectedStyle,
@@ -127,7 +127,7 @@ const getGridCellStyle = (index: number) => {
   })
 }
 
-const wrap = (val:number, min:number, max: number) => {
+const wrap = (val: number, min: number, max: number) => {
   if (val < min) {
     return max - (min - val) % (max - min);
   } else if (val >= max) {
@@ -139,60 +139,60 @@ const wrap = (val:number, min:number, max: number) => {
 
 export const SudokuGrid = (props: any) => {
   let refEl = useRef(null);
-  let [selectedCell, setSelectedCell] = useState({x: 0, y: 0});
+  let [selectedCell, setSelectedCell] = useState({ x: 0, y: 0 });
   let [isFocused, setIsFocused] = useState(false);
   useOnClickOutside(refEl, () => setIsFocused(false));
 
-  useEffect(() => {
-    let handler = (e: KeyboardEvent) => {
-      if(isFocused) {
-        // console.log('keypressed');
-        switch (e.key) {
-          case 'ArrowRight': 
-            setSelectedCell({...selectedCell, x: wrap(selectedCell.x + 1, 0, 9)});
-            break;
-          case 'ArrowLeft':
-            setSelectedCell({...selectedCell, x: wrap(selectedCell.x - 1, 0, 9)});
-            break;
-          case 'ArrowUp':
-            setSelectedCell({...selectedCell, y: wrap(selectedCell.y - 1, 0, 9)});
-            break;
-          case 'ArrowDown':
-            setSelectedCell({...selectedCell, y: wrap(selectedCell.y + 1, 0, 9)});
-            break;
-        }
-        e.preventDefault();
+  const keyDownHandler = (e: KeyboardEvent) => {
+    if (isFocused) {
+      // console.log('keypressed');
+      switch (e.key) {
+        case 'ArrowRight':
+          setSelectedCell({ ...selectedCell, x: wrap(selectedCell.x + 1, 0, 9) });
+          break;
+        case 'ArrowLeft':
+          setSelectedCell({ ...selectedCell, x: wrap(selectedCell.x - 1, 0, 9) });
+          break;
+        case 'ArrowUp':
+          setSelectedCell({ ...selectedCell, y: wrap(selectedCell.y - 1, 0, 9) });
+          break;
+        case 'ArrowDown':
+          setSelectedCell({ ...selectedCell, y: wrap(selectedCell.y + 1, 0, 9) });
+          break;
       }
+      e.preventDefault();
     }
-    document.addEventListener('keyup', handler);
-    return () => {
-      document.removeEventListener('keyup', handler);
-    }
-  })
+  }
 
-
-  return <div css={SudokuGridStyle} ref={refEl}>
-    {
-      nums.map((num, index) => {
-        let corner: Corner = 'None'
-        if (index === 0) corner = 'TL';
-        if (index === 8) corner = 'TR';
-        if (index === 72) corner = 'BL';
-        if (index === 80) corner = 'BR';
-        return <GridCell 
-          key={index}
-          selected={ isFocused && (index === (selectedCell.y * 9 + selectedCell.x)) }
-          corner={ corner }
-          index={index}
-          onClick={() => {
-            setSelectedCell({
-              x: index % 9,
-              y: Math.trunc(index / 9)
-            });
-            setIsFocused(true);
-          }}
-        >{ num }</GridCell>
-      })
-    }
-  </div>
+  return (
+    <div 
+      css={SudokuGridStyle}
+      ref={refEl}
+      onKeyDown={keyDownHandler}
+      tabIndex={-1}
+    >
+      {
+        nums.map((num, index) => {
+          let corner: Corner = 'None'
+          if (index === 0) corner = 'TL';
+          if (index === 8) corner = 'TR';
+          if (index === 72) corner = 'BL';
+          if (index === 80) corner = 'BR';
+          return <GridCell
+            key={index}
+            selected={isFocused && (index === (selectedCell.y * 9 + selectedCell.x))}
+            corner={corner}
+            index={index}
+            onClick={() => {
+              setSelectedCell({
+                x: index % 9,
+                y: Math.trunc(index / 9)
+              });
+              setIsFocused(true);
+            }}
+          >{num}</GridCell>
+        })
+      }
+    </div>
+  )
 }
