@@ -2,7 +2,9 @@
 
 import { css } from '@emotion/react';
 import { useState, useRef, KeyboardEvent } from 'react';
+import { useSelector } from 'react-redux';
 import useOnClickOutside from "../hooks/useOnClickOutside";
+import { RootState } from '../store';
 
 const gridBg = 'rgb(48, 48, 48)'
 const selectedCellBorderColor = '#006600'
@@ -21,20 +23,6 @@ const SudokuGridStyle = css({
   fontSize: '30px',
   userSelect: 'none',
 });
-
-const nums = [
-  1, 2, 3, 4, 5, 6, 7, 8, 9,
-  2, 3, 4, 5, 6, 7, 8, 9, 1,
-  3, 4, 5, 6, 7, 8, 9, 1, 2,
-  4, 5, 6, 7, 8, 9, 1, 2, 3,
-  5, 6, 7, 8, 9, 1, 2, 3, 4,
-  6, 7, 8, 9, 1, 2, 3, 4, 5,
-  7, 8, 9, 1, 2, 3, 4, 5, 6,
-  8, 9, 1, 2, 3, 4, 5, 6, 7,
-  9, 1, 2, 3, 4, 5, 6, 7, 8,
-];
-
-// let selection = 0;
 
 type Corner = 'TL' | 'TR' | 'BL' | 'BR' | 'None';
 
@@ -141,11 +129,11 @@ export const SudokuGrid = (props: any) => {
   let refEl = useRef(null);
   let [selectedCell, setSelectedCell] = useState({ x: 0, y: 0 });
   let [isFocused, setIsFocused] = useState(false);
+  let nums = useSelector((state: RootState) => state.digits);
   useOnClickOutside(refEl, () => setIsFocused(false));
 
   const keyDownHandler = (e: KeyboardEvent) => {
     if (isFocused) {
-      // console.log('keypressed');
       switch (e.key) {
         case 'ArrowRight':
           setSelectedCell({ ...selectedCell, x: wrap(selectedCell.x + 1, 0, 9) });
@@ -172,7 +160,7 @@ export const SudokuGrid = (props: any) => {
       tabIndex={-1}
     >
       {
-        nums.map((num, index) => {
+        nums.digits.map((num, index) => {
           let corner: Corner = 'None'
           if (index === 0) corner = 'TL';
           if (index === 8) corner = 'TR';
