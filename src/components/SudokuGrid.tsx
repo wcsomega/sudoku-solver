@@ -2,8 +2,9 @@
 
 import { css } from '@emotion/react';
 import { useState, useRef, KeyboardEvent } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useOnClickOutside from "../hooks/useOnClickOutside";
+import { setDigit } from '../digitsSlice';
 import { RootState } from '../store';
 
 const gridBg = 'rgb(48, 48, 48)'
@@ -125,30 +126,47 @@ const wrap = (val: number, min: number, max: number) => {
   }
 }
 
+const isNumKey = (key: string) => {
+  return !isNaN(+key) && key !== '0';
+}
+
 export const SudokuGrid = (props: any) => {
   let refEl = useRef(null);
   let [selectedCell, setSelectedCell] = useState({ x: 0, y: 0 });
   let [isFocused, setIsFocused] = useState(false);
   let nums = useSelector((state: RootState) => state.digits);
+  const dispatch = useDispatch();
+
   useOnClickOutside(refEl, () => setIsFocused(false));
 
   const keyDownHandler = (e: KeyboardEvent) => {
     if (isFocused) {
-      switch (e.key) {
-        case 'ArrowRight':
+      if(isNumKey(e.key)){
+        dispatch(setDigit({
+          digit: +e.key,
+          index: selectedCell.y * 9 + selectedCell.x
+        }));
+      } else {
+        switch (e.key) {
+          case 'ArrowRight':
+          case 'd':
           setSelectedCell({ ...selectedCell, x: wrap(selectedCell.x + 1, 0, 9) });
-          break;
-        case 'ArrowLeft':
-          setSelectedCell({ ...selectedCell, x: wrap(selectedCell.x - 1, 0, 9) });
-          break;
-        case 'ArrowUp':
-          setSelectedCell({ ...selectedCell, y: wrap(selectedCell.y - 1, 0, 9) });
-          break;
-        case 'ArrowDown':
-          setSelectedCell({ ...selectedCell, y: wrap(selectedCell.y + 1, 0, 9) });
-          break;
-      }
+            break;
+          case 'ArrowLeft':
+          case 'a':
+            setSelectedCell({ ...selectedCell, x: wrap(selectedCell.x - 1, 0, 9) });
+            break;
+          case 'ArrowUp':
+          case 'w':
+            setSelectedCell({ ...selectedCell, y: wrap(selectedCell.y - 1, 0, 9) });
+            break;
+          case 'ArrowDown':
+          case 's':
+            setSelectedCell({ ...selectedCell, y: wrap(selectedCell.y + 1, 0, 9) });
+            break;
+        }
       e.preventDefault();
+      }
     }
   }
 

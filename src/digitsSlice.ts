@@ -1,4 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+type SetDigitPayload = {
+  index: number,
+  digit: number
+}
 
 export const digitsSlice = createSlice({
   name: 'digits',
@@ -16,7 +21,7 @@ export const digitsSlice = createSlice({
     ],
   },
   reducers: {
-    setDigit: (state, action) => {
+    setDigit: (state, action: PayloadAction<SetDigitPayload>) => {
       const {index, digit} = action.payload;
       state.digits[index] = digit;
     }
