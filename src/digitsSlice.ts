@@ -5,29 +5,35 @@ type SetDigitPayload = {
   digit: number
 }
 
+interface SudokuDigit {
+  value: number, 
+  isFixed: boolean,
+}
+
+function createInitialDigitArray() {
+  let arr: SudokuDigit[] = [];
+  for(let i = 0; i < 81; i++) {
+    arr.push({value: 0, isFixed: false});
+  }
+  return arr;
+}
+
 export const digitsSlice = createSlice({
   name: 'digits',
   initialState: {
-    digits: [
-      1, 2, 3, 4, 5, 6, 7, 8, 9,
-      2, 3, 4, 5, 6, 7, 8, 9, 1,
-      3, 4, 5, 6, 7, 8, 9, 1, 2,
-      4, 5, 6, 7, 8, 9, 1, 2, 3,
-      5, 6, 7, 8, 9, 1, 2, 3, 4,
-      6, 7, 8, 9, 1, 2, 3, 4, 5,
-      7, 8, 9, 1, 2, 3, 4, 5, 6,
-      8, 9, 1, 2, 3, 4, 5, 6, 7,
-      9, 1, 2, 3, 4, 5, 6, 7, 8,
-    ],
+    value: createInitialDigitArray(),
   },
   reducers: {
     setDigit: (state, action: PayloadAction<SetDigitPayload>) => {
       const {index, digit} = action.payload;
-      state.digits[index] = digit;
+      state.value[index] = {value: digit, isFixed: true};
+    },
+    clearDigit: (state, action: PayloadAction<number>) => {
+      state.value[action.payload] = {value: 0, isFixed: false};
     }
   }
 });
 
-export const {setDigit} = digitsSlice.actions;
+export const {setDigit, clearDigit} = digitsSlice.actions;
 
 export default digitsSlice.reducer;

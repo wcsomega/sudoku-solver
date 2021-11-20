@@ -4,7 +4,7 @@ import { css } from '@emotion/react';
 import { useState, useRef, KeyboardEvent } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import useOnClickOutside from "../hooks/useOnClickOutside";
-import { setDigit } from '../digitsSlice';
+import { setDigit, clearDigit } from '../digitsSlice';
 import { RootState } from '../store';
 
 const gridBg = 'rgb(48, 48, 48)'
@@ -164,6 +164,10 @@ export const SudokuGrid = (props: any) => {
           case 's':
             setSelectedCell({ ...selectedCell, y: wrap(selectedCell.y + 1, 0, 9) });
             break;
+          case 'Delete':
+          case 'Backspace':
+            dispatch(clearDigit(selectedCell.y * 9 + selectedCell.x));
+            break;
         }
       e.preventDefault();
       }
@@ -178,7 +182,7 @@ export const SudokuGrid = (props: any) => {
       tabIndex={-1}
     >
       {
-        nums.digits.map((num, index) => {
+        nums.value.map((num, index) => {
           let corner: Corner = 'None'
           if (index === 0) corner = 'TL';
           if (index === 8) corner = 'TR';
@@ -196,7 +200,7 @@ export const SudokuGrid = (props: any) => {
               });
               setIsFocused(true);
             }}
-          >{num}</GridCell>
+          >{num.value || ''}</GridCell>
         })
       }
     </div>
